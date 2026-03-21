@@ -1,0 +1,10 @@
+node_modules
+.next
+.turbo
+dist
+out
+apps/**/node_modules
+apps/**/.next
+apps/**/dist
+# package-lock.json
+# !package-lock.json # Asegura que solo el de la raíz pase

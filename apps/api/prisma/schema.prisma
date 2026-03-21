@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String?
+  habits        Habit[]
+  journalEntries JournalEntry[]
+  createdAt     DateTime       @default(now())
+}
+
+model Habit {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  frequency   String[] // Ejemplo: ["MON", "WED", "FRI"]
+  time        String?  // Formato HH:mm
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  entries     DailyTrackEntry[]
+  createdAt   DateTime @default(now())
+}
+
+model DailyTrackEntry {
+  id        String   @id @default(uuid())
+  date      DateTime // Normalizado a las 00:00:00 del día del usuario
+  completed Boolean  @default(false)
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id])
+  
+  @@unique([habitId, date]) // Evita duplicados para el mismo hábito el mismo día
+}
+
+model JournalEntry {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.Text // Para soportar Markdown extenso
+  date      DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
