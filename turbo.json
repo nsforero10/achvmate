@@ -1,11 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["DATABASE_URL", "JWT_SECRET", "NODE_ENV", "AUTH_SECRET", "NEXTAUTH_URL", "AUTH_GITHUB_ID", "AUTH_GITHUB_SECRET", "AUTH_GOOGLE_ID", "AUTH_GOOGLE_SECRET", "AUTH_RESEND_KEY", "AUTH_EMAIL_FROM"],
   "tasks": {
+    "db:generate": {
+      "cache": false
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^db:generate", "^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "inputs": ["src/**", "prisma/**", "package.json", "tsconfig.json"],
-      "env": ["DATABASE_URL", "JWT_SECRET"]
+      "env": ["DATABASE_URL", "JWT_SECRET", "AUTH_SECRET"]
     },
     "dev": {
       "cache": false,

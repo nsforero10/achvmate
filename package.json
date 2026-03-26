@@ -1,7 +1,7 @@
 {
   "name": "achvmate",
   "private": true,
-  "packageManager": "npm@10.8.2", 
+  "packageManager": "npm@10.8.2",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -14,5 +14,8 @@
   },
   "devDependencies": {
     "turbo": "latest"
+  },
+  "dependencies": {
+    "resend": "^6.9.4"
   }
 }

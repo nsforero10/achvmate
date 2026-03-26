@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -25,21 +25,31 @@ services:
       dockerfile: apps/api/Dockerfile
     container_name: achvmate_api
     restart: always
-    # Eliminamos entrypoint y command manuales para usar los del Dockerfile
+    # Re-habilitamos el entrypoint para desarrollo
+    entrypoint: ./apps/api/entrypoint.sh 
+    command: sh -c "npx turbo db:generate && npm run dev -- --filter=@achvmate/api"
     ports:
       - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
-    # Solo mapeamos volúmenes si estamos en modo desarrollo (aquí comentados o quitados para que use la imagen)
-    # volumes:
-    #   - ./apps/api:/app/apps/api 
-    #   - ./package.json:/app/package.json
-    #   - ./turbo.json:/app/turbo.json
-    #   - /app/node_modules 
+      AUTH_SECRET: ${AUTH_SECRET}
+      # Keeps Prisma engine binaries inside the container — never touches host ~/.cache/prisma
+      PRISMA_BINARY_CACHE_DIR: /app/.cache/prisma
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages/database:/app/packages/database # CRÍTICO: Mapeo del paquete de tipos
+      - ./package.json:/app/package.json
+      - ./turbo.json:/app/turbo.json
+      # Volúmenes anónimos para proteger los binarios de Linux
+      - /app/node_modules
+      - /app/packages/database/node_modules
+      - /app/apps/api/node_modules
+      # Anonymous volume: Prisma engine cache stays in the container, not on the host
+      - /app/.cache/prisma
 
   # --- Frontend (Next.js) ---
   web:
@@ -48,17 +58,35 @@ services:
       dockerfile: apps/web/Dockerfile
     container_name: achvmate_web
     restart: always
+    command: sh -c "npx turbo db:generate && npm run dev -- --filter=@achvmate/web"
     ports:
-      - "3001:3000"
+      - "3002:3000"
     depends_on:
-      - api
+      api:
+        condition: service_started
     environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NODE_ENV=development
+      - AUTH_SECRET=${AUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3002}
+      - AUTH_GITHUB_ID=${AUTH_GITHUB_ID}
+      - AUTH_GITHUB_SECRET=${AUTH_GITHUB_SECRET}
+      - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
+      - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
+      - AUTH_RESEND_KEY=${AUTH_RESEND_KEY}
+      - AUTH_EMAIL_FROM=${AUTH_EMAIL_FROM}
+      # Keeps Prisma engine binaries inside the container — never touches host ~/.cache/prisma
+      - PRISMA_BINARY_CACHE_DIR=/app/.cache/prisma
     volumes:
-      - ./apps/web:/app/apps/web  # Mapeo exacto al workspace
+      - ./apps/web:/app/apps/web
+      - ./packages/database:/app/packages/database # CRÍTICO: Para que Zod actualice los tipos en el front
       - ./package.json:/app/package.json
+      - ./turbo.json:/app/turbo.json
       - /app/node_modules
       - /app/apps/web/.next
+      # Anonymous volume: Prisma engine cache stays in the container, not on the host
+      - /app/.cache/prisma
 
 volumes:
   postgres_data:

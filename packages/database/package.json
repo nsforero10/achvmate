@@ -1,0 +1,24 @@
+{
+  "name": "@achvmate/database",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "latest",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/pg": "^8.20.0",
+    "bcryptjs": "^3.0.3",
+    "pg": "^8.20.0",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "prisma": "latest",
+    "zod-prisma-types": "^3.3.11"
+  }
+}

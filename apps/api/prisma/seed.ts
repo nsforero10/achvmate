@@ -1,35 +1,58 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
-
-// Configuramos el adaptador igual que en tu Service
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool as any);
-const prisma = new PrismaClient({ adapter });
+import { prisma } from '@achvmate/database';
 
 async function main() {
-  console.log(
-    '🔍 DATABASE_URL detectada en el script:',
-    process.env.DATABASE_URL,
-  );
-  console.log('🌱 Iniciando seeding...');
-
-  const nico = await prisma.user.upsert({
-    where: { email: 'ns.forero10@gmail.com' },
+  console.log("Seeding database...");
+  
+  const user1 = await prisma.user.upsert({
+    where: { email: 'alice@achvmate.com' },
     update: {},
     create: {
-      email: 'ns.forero10@gmail.com',
-      name: 'Nicolás Forero',
+      email: 'alice@achvmate.com',
+      name: 'Alice',
+      habits: {
+        create: [
+          {
+            name: 'Drink Water',
+            description: 'Drink 2 liters of water daily',
+            frequency: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+            time: '08:00',
+          },
+          {
+            name: 'Read',
+            description: 'Read 10 pages of a book',
+            frequency: ['MON', 'WED', 'FRI'],
+          }
+        ]
+      }
     },
   });
 
-  console.log({ nico });
-  console.log('✅ Seeding finalizado con éxito.');
+  const user2 = await prisma.user.upsert({
+    where: { email: 'bob@achvmate.com' },
+    update: {},
+    create: {
+      email: 'bob@achvmate.com',
+      name: 'Bob',
+      habits: {
+        create: [
+          {
+            name: 'Run',
+            description: 'Run 5km',
+            frequency: ['TUE', 'THU', 'SAT'],
+            time: '06:00',
+          }
+        ]
+      }
+    },
+  });
+
+  console.log("Seeding finished.");
+  console.log("Created users:", [user1.name, user2.name]);
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error en el seeding:', e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {
