@@ -20,7 +20,7 @@ export const SessionScalarFieldEnumSchema = z.enum(['id','sessionToken','userId'
 
 export const VerificationTokenScalarFieldEnumSchema = z.enum(['identifier','token','expires']);
 
-export const HabitScalarFieldEnumSchema = z.enum(['id','name','description','frequency','time','userId','createdAt']);
+export const HabitScalarFieldEnumSchema = z.enum(['id','name','description','categoryId','frequency','startTime','endTime','userId','createdAt','updatedAt']);
 
 export const DailyTrackEntryScalarFieldEnumSchema = z.enum(['id','date','completed','habitId']);
 
@@ -105,10 +105,13 @@ export const HabitSchema = z.object({
   id: z.uuid(),
   name: z.string(),
   description: z.string().nullable(),
+  categoryId: z.string(),
   frequency: z.string().array(),
-  time: z.string().nullable(),
+  startTime: z.string().nullable(),
+  endTime: z.string().nullable(),
   userId: z.string(),
   createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 })
 
 export type Habit = z.infer<typeof HabitSchema>
@@ -269,10 +272,13 @@ export const HabitSelectSchema: z.ZodType<Prisma.HabitSelect> = z.object({
   id: z.boolean().optional(),
   name: z.boolean().optional(),
   description: z.boolean().optional(),
+  categoryId: z.boolean().optional(),
   frequency: z.boolean().optional(),
-  time: z.boolean().optional(),
+  startTime: z.boolean().optional(),
+  endTime: z.boolean().optional(),
   userId: z.boolean().optional(),
   createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
   entries: z.union([z.boolean(),z.lazy(() => DailyTrackEntryFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => HabitCountOutputTypeArgsSchema)]).optional(),
@@ -639,10 +645,13 @@ export const HabitWhereInputSchema: z.ZodType<Prisma.HabitWhereInput> = z.strict
   id: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  categoryId: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   frequency: z.lazy(() => StringNullableListFilterSchema).optional(),
-  time: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  startTime: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  endTime: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
   userId: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema), z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema), z.coerce.date() ]).optional(),
   user: z.union([ z.lazy(() => UserScalarRelationFilterSchema), z.lazy(() => UserWhereInputSchema) ]).optional(),
   entries: z.lazy(() => DailyTrackEntryListRelationFilterSchema).optional(),
 });
@@ -651,10 +660,13 @@ export const HabitOrderByWithRelationInputSchema: z.ZodType<Prisma.HabitOrderByW
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
+  categoryId: z.lazy(() => SortOrderSchema).optional(),
   frequency: z.lazy(() => SortOrderSchema).optional(),
-  time: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
+  startTime: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
+  endTime: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
   entries: z.lazy(() => DailyTrackEntryOrderByRelationAggregateInputSchema).optional(),
 });
@@ -669,10 +681,13 @@ export const HabitWhereUniqueInputSchema: z.ZodType<Prisma.HabitWhereUniqueInput
   NOT: z.union([ z.lazy(() => HabitWhereInputSchema), z.lazy(() => HabitWhereInputSchema).array() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  categoryId: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   frequency: z.lazy(() => StringNullableListFilterSchema).optional(),
-  time: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  startTime: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  endTime: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
   userId: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema), z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema), z.coerce.date() ]).optional(),
   user: z.union([ z.lazy(() => UserScalarRelationFilterSchema), z.lazy(() => UserWhereInputSchema) ]).optional(),
   entries: z.lazy(() => DailyTrackEntryListRelationFilterSchema).optional(),
 }));
@@ -681,10 +696,13 @@ export const HabitOrderByWithAggregationInputSchema: z.ZodType<Prisma.HabitOrder
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
+  categoryId: z.lazy(() => SortOrderSchema).optional(),
   frequency: z.lazy(() => SortOrderSchema).optional(),
-  time: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
+  startTime: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
+  endTime: z.union([ z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema) ]).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => HabitCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => HabitMaxOrderByAggregateInputSchema).optional(),
   _min: z.lazy(() => HabitMinOrderByAggregateInputSchema).optional(),
@@ -697,10 +715,13 @@ export const HabitScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.HabitSc
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema), z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema), z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema), z.string() ]).optional().nullable(),
+  categoryId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema), z.string() ]).optional(),
   frequency: z.lazy(() => StringNullableListFilterSchema).optional(),
-  time: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema), z.string() ]).optional().nullable(),
+  startTime: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema), z.string() ]).optional().nullable(),
+  endTime: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema), z.string() ]).optional().nullable(),
   userId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema), z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema), z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema), z.coerce.date() ]).optional(),
 });
 
 export const DailyTrackEntryWhereInputSchema: z.ZodType<Prisma.DailyTrackEntryWhereInput> = z.strictObject({
@@ -1108,9 +1129,12 @@ export const HabitCreateInputSchema: z.ZodType<Prisma.HabitCreateInput> = z.stri
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutHabitsInputSchema),
   entries: z.lazy(() => DailyTrackEntryCreateNestedManyWithoutHabitInputSchema).optional(),
 });
@@ -1119,10 +1143,13 @@ export const HabitUncheckedCreateInputSchema: z.ZodType<Prisma.HabitUncheckedCre
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   userId: z.string(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   entries: z.lazy(() => DailyTrackEntryUncheckedCreateNestedManyWithoutHabitInputSchema).optional(),
 });
 
@@ -1130,9 +1157,12 @@ export const HabitUpdateInputSchema: z.ZodType<Prisma.HabitUpdateInput> = z.stri
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutHabitsNestedInputSchema).optional(),
   entries: z.lazy(() => DailyTrackEntryUpdateManyWithoutHabitNestedInputSchema).optional(),
 });
@@ -1141,10 +1171,13 @@ export const HabitUncheckedUpdateInputSchema: z.ZodType<Prisma.HabitUncheckedUpd
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   entries: z.lazy(() => DailyTrackEntryUncheckedUpdateManyWithoutHabitNestedInputSchema).optional(),
 });
 
@@ -1152,29 +1185,38 @@ export const HabitCreateManyInputSchema: z.ZodType<Prisma.HabitCreateManyInput> 
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   userId: z.string(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 export const HabitUpdateManyMutationInputSchema: z.ZodType<Prisma.HabitUpdateManyMutationInput> = z.strictObject({
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 });
 
 export const HabitUncheckedUpdateManyInputSchema: z.ZodType<Prisma.HabitUncheckedUpdateManyInput> = z.strictObject({
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 });
 
 export const DailyTrackEntryCreateInputSchema: z.ZodType<Prisma.DailyTrackEntryCreateInput> = z.strictObject({
@@ -1627,28 +1669,37 @@ export const HabitCountOrderByAggregateInputSchema: z.ZodType<Prisma.HabitCountO
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
+  categoryId: z.lazy(() => SortOrderSchema).optional(),
   frequency: z.lazy(() => SortOrderSchema).optional(),
-  time: z.lazy(() => SortOrderSchema).optional(),
+  startTime: z.lazy(() => SortOrderSchema).optional(),
+  endTime: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
 });
 
 export const HabitMaxOrderByAggregateInputSchema: z.ZodType<Prisma.HabitMaxOrderByAggregateInput> = z.strictObject({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  time: z.lazy(() => SortOrderSchema).optional(),
+  categoryId: z.lazy(() => SortOrderSchema).optional(),
+  startTime: z.lazy(() => SortOrderSchema).optional(),
+  endTime: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
 });
 
 export const HabitMinOrderByAggregateInputSchema: z.ZodType<Prisma.HabitMinOrderByAggregateInput> = z.strictObject({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
-  time: z.lazy(() => SortOrderSchema).optional(),
+  categoryId: z.lazy(() => SortOrderSchema).optional(),
+  startTime: z.lazy(() => SortOrderSchema).optional(),
+  endTime: z.lazy(() => SortOrderSchema).optional(),
   userId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
 });
 
 export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.strictObject({
@@ -2274,9 +2325,12 @@ export const HabitCreateWithoutUserInputSchema: z.ZodType<Prisma.HabitCreateWith
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   entries: z.lazy(() => DailyTrackEntryCreateNestedManyWithoutHabitInputSchema).optional(),
 });
 
@@ -2284,9 +2338,12 @@ export const HabitUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.HabitU
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   entries: z.lazy(() => DailyTrackEntryUncheckedCreateNestedManyWithoutHabitInputSchema).optional(),
 });
 
@@ -2407,10 +2464,13 @@ export const HabitScalarWhereInputSchema: z.ZodType<Prisma.HabitScalarWhereInput
   id: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   description: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  categoryId: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   frequency: z.lazy(() => StringNullableListFilterSchema).optional(),
-  time: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  startTime: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
+  endTime: z.union([ z.lazy(() => StringNullableFilterSchema), z.string() ]).optional().nullable(),
   userId: z.union([ z.lazy(() => StringFilterSchema), z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema), z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema), z.coerce.date() ]).optional(),
 });
 
 export const JournalEntryUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.JournalEntryUpsertWithWhereUniqueWithoutUserInput> = z.strictObject({
@@ -2696,9 +2756,12 @@ export const HabitCreateWithoutEntriesInputSchema: z.ZodType<Prisma.HabitCreateW
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutHabitsInputSchema),
 });
 
@@ -2706,10 +2769,13 @@ export const HabitUncheckedCreateWithoutEntriesInputSchema: z.ZodType<Prisma.Hab
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   userId: z.string(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 export const HabitCreateOrConnectWithoutEntriesInputSchema: z.ZodType<Prisma.HabitCreateOrConnectWithoutEntriesInput> = z.strictObject({
@@ -2732,9 +2798,12 @@ export const HabitUpdateWithoutEntriesInputSchema: z.ZodType<Prisma.HabitUpdateW
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   user: z.lazy(() => UserUpdateOneRequiredWithoutHabitsNestedInputSchema).optional(),
 });
 
@@ -2742,10 +2811,13 @@ export const HabitUncheckedUpdateWithoutEntriesInputSchema: z.ZodType<Prisma.Hab
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   userId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 });
 
 export const UserCreateWithoutJournalEntriesInputSchema: z.ZodType<Prisma.UserCreateWithoutJournalEntriesInput> = z.strictObject({
@@ -2840,9 +2912,12 @@ export const HabitCreateManyUserInputSchema: z.ZodType<Prisma.HabitCreateManyUse
   id: z.uuid().optional(),
   name: z.string(),
   description: z.string().optional().nullable(),
+  categoryId: z.string().optional(),
   frequency: z.union([ z.lazy(() => HabitCreatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.string().optional().nullable(),
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 export const JournalEntryCreateManyUserInputSchema: z.ZodType<Prisma.JournalEntryCreateManyUserInput> = z.strictObject({
@@ -2916,9 +2991,12 @@ export const HabitUpdateWithoutUserInputSchema: z.ZodType<Prisma.HabitUpdateWith
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   entries: z.lazy(() => DailyTrackEntryUpdateManyWithoutHabitNestedInputSchema).optional(),
 });
 
@@ -2926,9 +3004,12 @@ export const HabitUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.HabitU
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   entries: z.lazy(() => DailyTrackEntryUncheckedUpdateManyWithoutHabitNestedInputSchema).optional(),
 });
 
@@ -2936,9 +3017,12 @@ export const HabitUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.Ha
   id: z.union([ z.uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  categoryId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   frequency: z.union([ z.lazy(() => HabitUpdatefrequencyInputSchema), z.string().array() ]).optional(),
-  time: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  startTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  endTime: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 });
 
 export const JournalEntryUpdateWithoutUserInputSchema: z.ZodType<Prisma.JournalEntryUpdateWithoutUserInput> = z.strictObject({

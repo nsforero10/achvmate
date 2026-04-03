@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "AchvMate — Build better habits",
   description:
     "AchvMate helps you track your habits, journal your progress, and achieve your goals.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

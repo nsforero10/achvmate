@@ -19,8 +19,9 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { useColorMode } from "../providers";
+import { Logo } from "@/components/Logo";
 
-// ─── Google "G" icon ──────────────────────────────────────────────────────────
+
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -44,7 +45,6 @@ function GoogleIcon() {
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
 export function LoginCard() {
   const theme = useTheme();
   const { toggle } = useColorMode();
@@ -77,7 +77,6 @@ export function LoginCard() {
         router.push("/");
       }
     } else {
-      // Sign up flow — call our API route
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,7 +87,6 @@ export function LoginCard() {
         setError(data.error ?? "Something went wrong.");
         setLoading(false);
       } else {
-        // Auto sign-in after registration
         await signIn("credentials", { email, password, redirect: false });
         setLoading(false);
         router.push("/");
@@ -96,7 +94,6 @@ export function LoginCard() {
     }
   }
 
-  // ─── Background texture ──────────────────────────────────────────────────
   const bgStyle = {
     minHeight: "100vh",
     display: "flex",
@@ -113,7 +110,6 @@ export function LoginCard() {
 
   return (
     <Box sx={bgStyle}>
-      {/* Dark mode toggle */}
       <IconButton
         onClick={toggle}
         size="small"
@@ -127,7 +123,6 @@ export function LoginCard() {
         )}
       </IconButton>
 
-      {/* Auth card */}
       <Card
         elevation={0}
         sx={{
@@ -141,7 +136,9 @@ export function LoginCard() {
         }}
       >
         <CardContent sx={{ p: 4 }}>
-          {/* Title */}
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+            <Logo size={60} variant={isDark ? "dark" : "light"} />
+          </Box>
           <Typography
             variant="h4"
             fontWeight={800}
@@ -155,7 +152,6 @@ export function LoginCard() {
             AchvMate
           </Typography>
 
-          {/* OAuth buttons */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
             <Button
               fullWidth
@@ -182,14 +178,12 @@ export function LoginCard() {
             </Button>
           </Box>
 
-          {/* or divider */}
           <Divider sx={{ my: 2 }}>
             <Typography variant="caption" color="text.secondary">
               or
             </Typography>
           </Divider>
 
-          {/* Credentials form */}
           <Box
             component="form"
             onSubmit={handleCredentials}
@@ -225,7 +219,6 @@ export function LoginCard() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {/* Footer links */}
             {isLogin ? (
               <Box
                 sx={{

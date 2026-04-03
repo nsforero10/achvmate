@@ -61,7 +61,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 
   jwt: {
-    // Use standard HS256 JWT so the NestJS backend can verify tokens with the same AUTH_SECRET
     encode: async ({ token, secret }) => {
       const jwtSecret = Array.isArray(secret) ? secret[0] : secret
       return jwt.sign(token!, jwtSecret, { algorithm: "HS256" })

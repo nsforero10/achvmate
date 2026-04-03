@@ -10,8 +10,6 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Starting seed...\n');
 
-  // ─── 1. Credentials user (email + password) ──────────────────────────────
-  // This user tests the Credentials provider in auth.ts
   const passwordHash = await bcrypt.hash('password123', 10);
 
   const credentialsUser = await prisma.user.upsert({
@@ -26,21 +24,17 @@ async function main() {
   console.log('✅ Credentials user:', credentialsUser.email);
   console.log('   Login with: test@achvmate.app / password123\n');
 
-  // ─── 2. OAuth-only user (no password) ─────────────────────────────────────
-  // Simulates a user who signed in with GitHub/Google — password is null
   const oauthUser = await prisma.user.upsert({
     where: { email: 'ns.forero10@gmail.com' },
     update: {},
     create: {
       email: 'ns.forero10@gmail.com',
       name: 'Nicolás Forero',
-      password: null, // OAuth-only, no password
+      password: null,
     },
   });
   console.log('✅ OAuth user:', oauthUser.email);
-  console.log('   (No password — OAuth sign-in only)\n');
 
-  // ─── 3. Habits for the credentials user ───────────────────────────────────
   const habit1 = await prisma.habit.upsert({
     where: { id: 'seed-habit-1' },
     update: {},
@@ -68,7 +62,6 @@ async function main() {
   });
   console.log('✅ Habits created:', habit1.name, '/', habit2.name, '\n');
 
-  // ─── 4. Daily tracking entries ─────────────────────────────────────────────
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -85,7 +78,6 @@ async function main() {
   });
   console.log('✅ Daily tracking entries created for today\n');
 
-  // ─── 5. Journal entry ─────────────────────────────────────────────────────
   await prisma.journalEntry.create({
     data: {
       title: 'First day with Achvmate',
@@ -96,11 +88,9 @@ async function main() {
   console.log('✅ Journal entry created\n');
 
   console.log('🎉 Seed complete!\n');
-  console.log('─────────────────────────────────────────');
   console.log('Test credentials login:');
   console.log('  Email:    test@achvmate.app');
   console.log('  Password: password123');
-  console.log('─────────────────────────────────────────');
 }
 
 main()

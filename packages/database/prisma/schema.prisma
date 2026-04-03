@@ -17,7 +17,7 @@ model User {
   emailVerified DateTime?
   image         String?
   name          String?
-  password      String?        // Hashed with bcrypt — null for OAuth-only users
+  password      String?
   accounts      Account[]
   sessions      Session[]
   habits        Habit[]
@@ -64,28 +64,31 @@ model Habit {
   id          String   @id @default(uuid())
   name        String
   description String?
-  frequency   String[] // Ejemplo: ["MON", "WED", "FRI"]
-  time        String?  // Formato HH:mm
+  categoryId  String   @default("Wellness") 
+  frequency   String[]
+  startTime   String?
+  endTime     String?
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   entries     DailyTrackEntry[]
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model DailyTrackEntry {
   id        String   @id @default(uuid())
-  date      DateTime // Normalizado a las 00:00:00 del día del usuario
+  date      DateTime
   completed Boolean  @default(false)
   habitId   String
   habit     Habit    @relation(fields: [habitId], references: [id])
   
-  @@unique([habitId, date]) // Evita duplicados para el mismo hábito el mismo día
+  @@unique([habitId, date])
 }
 
 model JournalEntry {
   id        String   @id @default(uuid())
   title     String
-  content   String   @db.Text // Para soportar Markdown extenso
+  content   String   @db.Text
   date      DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id])

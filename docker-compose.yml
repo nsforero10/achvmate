@@ -76,6 +76,8 @@ services:
       - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
       - AUTH_RESEND_KEY=${AUTH_RESEND_KEY}
       - AUTH_EMAIL_FROM=${AUTH_EMAIL_FROM}
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
       # Keeps Prisma engine binaries inside the container — never touches host ~/.cache/prisma
       - PRISMA_BINARY_CACHE_DIR=/app/.cache/prisma
     volumes:
@@ -83,7 +85,11 @@ services:
       - ./packages/database:/app/packages/database # CRÍTICO: Para que Zod actualice los tipos en el front
       - ./package.json:/app/package.json
       - ./turbo.json:/app/turbo.json
+      - ./tsconfig.json:/app/tsconfig.json
+      # Volúmenes anónimos para proteger los binarios de Linux
       - /app/node_modules
+      - /app/packages/database/node_modules
+      - /app/apps/web/node_modules
       - /app/apps/web/.next
       # Anonymous volume: Prisma engine cache stays in the container, not on the host
       - /app/.cache/prisma

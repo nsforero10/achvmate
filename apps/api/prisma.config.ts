@@ -4,7 +4,6 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { defineConfig, env } from 'prisma/config';
 
 
-// If running natively, __dirname gets us 'apps/api'. In docker, it may just be '/app' or '/app/apps/api'.
 const isDockerRoot = __dirname === '/app';
 const databaseDir = isDockerRoot ? './packages/database' : '../../packages/database';
 

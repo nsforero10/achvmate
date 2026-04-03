@@ -15,7 +15,6 @@ export class UsersService {
         image: true,
         createdAt: true,
         emailVerified: true,
-        // Never expose password
       },
     });
 
