@@ -15,8 +15,8 @@ function buildTheme(mode: "light" | "dark") {
       mode,
       primary: { main: "#111111" },
       background: {
-        default: mode === "light" ? "#e8e8e8" : "#1a1a1a",
-        paper: mode === "light" ? "#ffffff" : "#2a2a2a",
+        default: mode === "light" ? "#f8f9fa" : "#0f0f0f",
+        paper: mode === "light" ? "#ffffff" : "#1c1c1c",
       },
     },
     typography: {
@@ -24,6 +24,16 @@ function buildTheme(mode: "light" | "dark") {
     },
     shape: { borderRadius: 12 },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: (themeParam) => ({
+          body: {
+            backgroundImage: themeParam.palette.mode === 'dark'
+              ? "repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 16px)"
+              : "repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 2px, transparent 2px, transparent 15px)",
+            backgroundColor: themeParam.palette.background.default,
+          },
+        }),
+      },
       MuiButton: {
         styleOverrides: {
           root: {

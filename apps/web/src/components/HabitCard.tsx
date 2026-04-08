@@ -12,6 +12,7 @@ import EditIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ReactMarkdown from "react-markdown";
 
 import { getCategoryConfig } from "@/lib/categories";
 
@@ -47,7 +48,17 @@ export function HabitCard({
   const config = getCategoryConfig(habit.categoryId);
   const Icon = config.icon;
 
-  const timeString = `${habit.startTime || "--:--"} - ${habit.endTime || "--:--"}`;
+  const formatTime = (timeStr: string | null) => {
+    if (!timeStr) return { time: "--:--", period: "" };
+    const [h, m] = timeStr.split(":");
+    let hours = parseInt(h, 10);
+    const period = hours >= 12 ? "pm" : "am";
+    hours = hours % 12 || 12;
+    return { time: `${hours}:${m}`, period };
+  };
+
+  const start = formatTime(habit.startTime);
+  const end = formatTime(habit.endTime);
 
   return (
     <Card
@@ -55,7 +66,7 @@ export function HabitCard({
       onMouseLeave={() => setIsHovered(false)}
       elevation={0}
       sx={{
-        width: 250,
+        minWidth: 250,
         minHeight: 340,
         bgcolor: config.color,
         color: "#1a1a1a",
@@ -72,8 +83,8 @@ export function HabitCard({
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <Icon fontSize="small" sx={{ opacity: 0.8 }} />
-          <Typography variant="caption" sx={{ fontWeight: 600, opacity: 0.8 }}>
+          {!isHovered ? null : <Icon fontSize="small" sx={{ opacity: 0.8 }} />}
+          <Typography variant="caption" sx={{ fontWeight: isHovered ? 600 : 300, opacity: 0.9, fontSize: isHovered ? 12 : 16 }}>
             {config.label}
           </Typography>
         </Box>
@@ -92,92 +103,124 @@ export function HabitCard({
             </Tooltip>
           </Box>
         ) : (
-          <IconButton size="small" disableRipple sx={{ color: "inherit", opacity: 0.8, p: 0.5 }}>
-            <InfoOutlinedIcon fontSize="small" />
-          </IconButton>
+          <Icon fontSize="medium" sx={{ color: "#1a1a1a", opacity: 0.9 }} />
         )}
       </Box>
 
-      <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.2, mb: 1, letterSpacing: "-0.02em" }}>
-        {habit.name}
-      </Typography>
-
       {isHovered ? (
-        <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 1.5, mt: 1, animation: "fadeIn 0.2s" }}>
-          <Box>
-            <Typography variant="caption" sx={{ display: "block", mb: 0.5, opacity: 0.8 }}>Time:</Typography>
-            <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, border: "1px solid rgba(0,0,0,0.4)", borderRadius: 12, px: 1, py: 0.25 }}>
-              <AccessTimeIcon sx={{ fontSize: 14 }} />
-              <Typography variant="caption" sx={{ fontWeight: 600 }}>{timeString}</Typography>
-            </Box>
-          </Box>
-          
-          <Box sx={{ display: "flex", gap: 0.5, mt: 0.5 }}>
-            {DAYS.map((day, i) => {
-              const isActive = habit.frequency.includes(DAY_CODES[i]);
-              return (
-                <Box
-                  key={i}
-                  sx={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "1px solid rgba(0,0,0,0.4)",
-                    bgcolor: isActive ? "rgba(0,0,0,0.05)" : "transparent",
-                    color: "inherit",
-                    fontWeight: isActive ? 800 : 400,
-                  }}
-                >
-                  <Typography variant="caption" sx={{ fontSize: 10 }}>{day}</Typography>
-                </Box>
-              );
-            })}
-          </Box>
-
-          {habit.description && (
-            <Box sx={{ mt: 1 }}>
-              <Typography variant="caption" sx={{ display: "block", mb: 0.2, opacity: 0.8 }}>Description</Typography>
-              <Typography variant="caption" sx={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", lineHeight: 1.3 }}>
-                {habit.description}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      ) : (
-        <Box sx={{ flexGrow: 1 }} />
-      )}
-
-      {!isHovered && (
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mt: "auto" }}>
-          <Typography variant="caption" sx={{ fontWeight: 600, opacity: 0.8 }}>
-            {timeString}
+        <>
+          <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.2, mb: 1, letterSpacing: "-0.02em" }}>
+            {habit.name}
           </Typography>
-          <Box
-            onClick={() => onToggleComplete?.(habit.id, completed)}
-            sx={{
-              width: 32,
-              height: 32,
-              borderRadius: 2,
-              border: "2px solid rgba(0,0,0,0.8)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              bgcolor: completed ? "rgba(0,0,0,0.8)" : "transparent",
-            }}
-          >
-            {completed && <Typography sx={{ color: config.color, lineHeight: 1 }}>✓</Typography>}
+          <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", gap: 1.5, mt: 1, animation: "fadeIn 0.2s" }}>
+            <Box>
+              <Typography variant="caption" sx={{ display: "block", mb: 0.5, opacity: 0.8 }}>Time:</Typography>
+              <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, border: "1px solid rgba(0,0,0,0.4)", borderRadius: 12, px: 1, py: 0.25 }}>
+                <AccessTimeIcon sx={{ fontSize: 14 }} />
+                <Typography variant="caption" sx={{ fontWeight: 600 }}>{`${start.time}${start.period} - ${end.time}${end.period}`}</Typography>
+              </Box>
+            </Box>
+            
+            <Box sx={{ display: "flex", gap: 0.5, mt: 0.5 }}>
+              {DAYS.map((day, i) => {
+                const isActive = habit.frequency.includes(DAY_CODES[i]);
+                return (
+                  <Box
+                    key={i}
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: "1px solid rgba(0,0,0,0.4)",
+                      bgcolor: isActive ? "rgba(0,0,0,0.05)" : "transparent",
+                      color: "inherit",
+                      fontWeight: isActive ? 800 : 400,
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ fontSize: 10 }}>{day}</Typography>
+                  </Box>
+                );
+              })}
+            </Box>
+
+            {habit.description && (
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="caption" sx={{ display: "block", mb: 0.2, opacity: 0.8 }}>Description</Typography>
+                <Box sx={{ 
+                  overflowY: "auto", 
+                  maxHeight: 120,
+                  lineHeight: 1.3,
+                  fontSize: "0.75rem",
+                  "& p": { m: 0, mb: 0.5 },
+                  "& p:last-child": { mb: 0 },
+                  "& ul": { m: 0, pl: 2.5, mb: 0.5, listStyleType: "disc" },
+                  "& ol": { m: 0, pl: 2.5, mb: 0.5, listStyleType: "decimal" },
+                  "& li": { mb: 0.2 },
+                  "& h1, & h2, & h3": { m: 0, mb: 0.5, fontWeight: 800, lineHeight: 1.2 },
+                  "& h1": { fontSize: "1.2em" },
+                  "& h2": { fontSize: "1.1em" },
+                  "& h3": { fontSize: "1.05em" },
+                  "& strong": { fontWeight: 800 },
+                  "& code": { bgcolor: "rgba(0,0,0,0.05)", px: 0.5, borderRadius: 1, fontFamily: "monospace" }
+                }}>
+                  <ReactMarkdown>{habit.description}</ReactMarkdown>
+                </Box>
+              </Box>
+            )}
           </Box>
+        </>
+      ) : (
+        <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Typography 
+            variant="h4" 
+            align="center"
+            sx={{ fontWeight: 300, lineHeight: 1.1, letterSpacing: "-0.02em", color: "#1a1a1a" }}
+          >
+            {habit.name}
+          </Typography>
         </Box>
       )}
 
-      {isHovered && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: "auto" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mt: "auto", pt: 1 }}>
+        {isHovered ? (
+          <Typography variant="caption" sx={{ fontWeight: 600, opacity: 0.8 }}>
+            {`${start.time}${start.period} - ${end.time}${end.period}`}
+          </Typography>
+        ) : (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Typography sx={{ fontSize: 15, fontWeight: 300, lineHeight: 1 }}>{start.time}</Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 300, lineHeight: 1.2, opacity: 0.8 }}>{start.period}</Typography>
+            </Box>
+            <Typography sx={{ fontSize: 15, fontWeight: 800, mb: 1.5 }}>_</Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Typography sx={{ fontSize: 15, fontWeight: 300, lineHeight: 1 }}>{end.time}</Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 300, lineHeight: 1.2, opacity: 0.8 }}>{end.period}</Typography>
+            </Box>
+          </Box>
+        )}
+
+        <Box
+          onClick={() => onToggleComplete?.(habit.id, completed)}
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: 2,
+            border: "1.5px solid #1a1a1a",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            bgcolor: completed ? "#1a1a1a" : "transparent",
+            mb: 0.5
+          }}
+        >
+          {completed && <Typography sx={{ color: config.color, lineHeight: 1 }}>✓</Typography>}
         </Box>
-      )}
+      </Box>
     </Card>
   );
 }

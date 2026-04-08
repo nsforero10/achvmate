@@ -10,26 +10,31 @@ export function CalendarStrip() {
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 6 }}>
-      {DAYS_SHORT.map((day, ix) => (
-        <Box
-          key={ix}
-          sx={{
-            width: 44,
-            height: 44,
-            borderRadius: "50%",
-            border: ix === todayIndex ? "2px solid" : "1px solid",
-            borderColor: "divider",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: ix === todayIndex ? "action.hover" : "transparent",
-          }}
-        >
-          <Typography sx={{ fontWeight: ix === todayIndex ? 800 : 400, fontSize: 16 }}>
-            {ix === todayIndex ? "Today" : day}
-          </Typography>
-        </Box>
-      ))}
+      {DAYS_SHORT.map((day, ix) => {
+        const isToday = ix === todayIndex;
+        return (
+          <Box
+            key={ix}
+            sx={{
+              minWidth: isToday ? 84 : 44,
+              height: 44,
+              px: isToday ? 2.5 : 0,
+              borderRadius: isToday ? 22 : "50%",
+              border: isToday ? "2px solid" : "1px solid",
+              borderColor: isToday ? "text.primary" : "rgba(150,150,150,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "transparent",
+              color: isToday ? "text.primary" : "text.secondary",
+            }}
+          >
+            <Typography sx={{ fontWeight: isToday ? 800 : 500, fontSize: 16 }}>
+              {isToday ? "Today" : day}
+            </Typography>
+          </Box>
+        );
+      })}
     </Box>
   );
 }

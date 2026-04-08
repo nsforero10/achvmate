@@ -8,6 +8,11 @@ import { DashboardHeader } from "./DashboardHeader";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { CalendarStrip } from "./CalendarStrip";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 interface HabitManagerProps {
   initialHabits: any[];
@@ -18,6 +23,7 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
   const [habits, setHabits] = useState(initialHabits);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<any>(null);
+  const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -67,10 +73,27 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    await fetch(`${API_BASE}/habits/${id}`, {
+  const promptDelete = (id: string) => {
+    setHabitToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!habitToDelete) return;
+    await fetch(`${API_BASE}/habits/${habitToDelete}`, {
       method: "DELETE",
       credentials: "include",
+    });
+    setHabitToDelete(null);
+    fetchHabits();
+  };
+
+  const handleToggleComplete = async (habitId: string) => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    await fetch(`${API_BASE}/habits/${habitId}/toggle`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ date: todayStr }),
     });
     fetchHabits();
   };
@@ -78,33 +101,38 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
   return (
     <>
       <DashboardHeader dateString={dateString} onOpenNew={handleOpenNew} />
-      <Typography variant="h4" align="center" fontWeight="300" sx={{ mt: 2, mb: 4, opacity: 0.8 }}>
-            Track your habits
-        </Typography>
         <CalendarStrip />
       
       <Box
         sx={{
           flexGrow: 1,
-          bgcolor: isDark ? "#1e1e1e" : "#fff",
-          m: 4,
+          bgcolor: "background.paper",
+          m: 2,
           mt: 0,
-          borderRadius: 6,
-          boxShadow: "0 10px 40px rgba(0,0,0,0.05)",
+          borderRadius: 4,
+          border: isDark ? "1px solid rgba(255,255,255,0.05)" : "none",
+          boxShadow: isDark ? "none" : "0 10px 40px rgba(0,0,0,0.05)",
           p: 4,
           overflowX: "auto",
           display: "flex",
           gap: 3,
         }}
       >
-        {habits.map((h) => (
-          <HabitCard
-            key={h.id}
-            habit={h}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
+        {habits.map((h) => {
+          const todayStr = new Date().toISOString().split('T')[0];
+          const isCompletedToday = h.entries?.some((e: any) => e.date.startsWith(todayStr) && e.completed);
+
+          return (
+            <HabitCard
+              key={h.id}
+              habit={h}
+              completed={isCompletedToday}
+              onToggleComplete={handleToggleComplete}
+              onEdit={handleEdit}
+              onDelete={promptDelete}
+            />
+          );
+        })}
       </Box>
 
       <HabitFormModal
@@ -113,6 +141,36 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
         onSubmit={handleSubmitHabit}
         initialData={editingHabit}
       />
+
+      <Dialog 
+        open={!!habitToDelete} 
+        onClose={() => setHabitToDelete(null)} 
+        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800 }}>Delete Habit?</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Are you sure you want to delete this habit? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button 
+            onClick={() => setHabitToDelete(null)} 
+            sx={{ color: "text.primary", textTransform: "none", fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={confirmDelete} 
+            variant="contained" 
+            color="error" 
+            disableElevation
+            sx={{ textTransform: "none", fontWeight: 600, borderRadius: 8, px: 3 }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

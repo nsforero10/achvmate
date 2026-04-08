@@ -19,7 +19,8 @@ export class HabitsService {
   async findAllByUser(userId: string) {
     return this.prisma.client.habit.findMany({
       where: { userId },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { startTime: 'asc' },
+      include: { entries: true },
     });
   }
 
@@ -45,6 +46,33 @@ export class HabitsService {
     const habit = await this.findOne(id, userId);
     return this.prisma.client.habit.delete({
       where: { id: habit.id },
+    });
+  }
+
+  async toggleCompletion(id: string, userId: string, dateStr: string) {
+    const habit = await this.findOne(id, userId);
+    const date = new Date(dateStr);
+
+    const existingEntry = await this.prisma.client.dailyTrackEntry.findFirst({
+      where: {
+        habitId: habit.id,
+        date: date,
+      },
+    });
+
+    if (existingEntry) {
+      return this.prisma.client.dailyTrackEntry.update({
+        where: { id: existingEntry.id },
+        data: { completed: !existingEntry.completed },
+      });
+    }
+
+    return this.prisma.client.dailyTrackEntry.create({
+      data: {
+        date,
+        completed: true,
+        habitId: habit.id,
+      },
     });
   }
 }

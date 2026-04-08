@@ -33,4 +33,9 @@ export class HabitsController {
   remove(@Request() req, @Param('id') id: string) {
     return this.habitsService.remove(id, req.user.userId);
   }
+
+  @Post(':id/toggle')
+  toggleCompletion(@Request() req, @Param('id') id: string, @Body('date') date: string) {
+    return this.habitsService.toggleCompletion(id, req.user.userId, date);
+  }
 }

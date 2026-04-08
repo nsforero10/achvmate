@@ -11,11 +11,15 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { useTheme } from "@mui/material/styles";
 import { useColorMode } from "../../app/providers";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
 import { Logo } from "../Logo";
 
 export function Sidebar() {
   const { toggle } = useColorMode();
   const theme = useTheme();
+  const pathname = usePathname();
   const isDark = theme.palette.mode === "dark";
 
   return (
@@ -44,12 +48,28 @@ export function Sidebar() {
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3, flexGrow: 1 }}>
-        <IconButton sx={{ color: isDark ? "#fff" : "#111", bgcolor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.04)" }}>
-          <HomeRoundedIcon />
-        </IconButton>
-        <IconButton sx={{ color: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)" }}>
-          <FormatListBulletedRoundedIcon />
-        </IconButton>
+        <Link href="/habits/daily" passHref legacyBehavior>
+          <IconButton 
+            sx={{ 
+              color: pathname?.includes("/habits/daily") ? (isDark ? "#fff" : "#111") : (isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"), 
+              bgcolor: pathname?.includes("/habits/daily") ? (isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.04)") : "transparent" 
+            }}
+          >
+            <FormatListBulletedRoundedIcon />
+          </IconButton>
+        </Link>
+        
+        <Link href="/habits/history-analytics" passHref legacyBehavior>
+          <IconButton 
+            sx={{ 
+              color: pathname?.includes("/habits/history-analytics") ? (isDark ? "#fff" : "#111") : (isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)"),
+              bgcolor: pathname?.includes("/habits/history-analytics") ? (isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.04)") : "transparent"
+            }}
+          >
+            <QueryStatsRoundedIcon />
+          </IconButton>
+        </Link>
+
         <IconButton sx={{ color: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)" }}>
           <CalendarTodayRoundedIcon />
         </IconButton>

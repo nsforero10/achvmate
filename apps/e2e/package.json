@@ -1,0 +1,15 @@
+{
+  "name": "@achvmate/e2e",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,6 +13,13 @@ import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import ReactMarkdown from "react-markdown";
+import FormatBoldIcon from "@mui/icons-material/FormatBold";
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import CodeIcon from "@mui/icons-material/Code";
+import LinkIcon from "@mui/icons-material/Link";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 
 import { HABIT_CATEGORIES } from "@/lib/categories";
 
@@ -44,6 +51,29 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
     frequency: [],
     description: "",
   });
+
+  const descriptionRef = useRef<HTMLInputElement>(null);
+
+  const insertMarkdown = (prefix: string, suffix: string = "") => {
+    const input = descriptionRef.current;
+    if (!input) return;
+
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    if (start === null || end === null) return;
+
+    const text = formData.description;
+    const selectedText = text.substring(start, end);
+    const newText = text.substring(0, start) + prefix + selectedText + suffix + text.substring(end);
+
+    setFormData((prev) => ({ ...prev, description: newText }));
+
+    // Request browser to restore focus and selection after state update
+    setTimeout(() => {
+      input.focus();
+      input.setSelectionRange(start + prefix.length, end + prefix.length);
+    }, 0);
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -80,13 +110,13 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
       onClose={onClose}
       PaperProps={{
         sx: {
-          borderRadius: 4,
+          borderRadius: 3,
           padding: 2,
           minWidth: 400,
         },
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
         <DialogTitle sx={{ p: 0, fontWeight: 800 }}>
           {initialData ? "Edit Habit" : "New Habit"}
         </DialogTitle>
@@ -96,7 +126,7 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
       </Box>
 
       <form onSubmit={handleSubmit}>
-        <DialogContent sx={{ p: 0, display: "flex", flexDirection: "column", gap: 2.5 }}>
+        <DialogContent sx={{ p: 0, display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
           <TextField
             fullWidth
             required
@@ -112,13 +142,44 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
               displayEmpty
+              renderValue={(selected) => {
+                const cat = HABIT_CATEGORIES.find((c) => c.id === selected) || HABIT_CATEGORIES[0];
+                const Icon = cat.icon;
+                return (
+                  <Chip
+                    icon={<Icon fontSize="small" />}
+                    label={cat.label}
+                    size="small"
+                    sx={{
+                      bgcolor: cat.color,
+                      fontWeight: 600,
+                      color: "black",
+                      "& .MuiChip-icon": { color: "black" },
+                    }}
+                  />
+                );
+              }}
               sx={{ bgcolor: "rgba(0,0,0,0.04)" }}
             >
-              {HABIT_CATEGORIES.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.label}
-                </MenuItem>
-              ))}
+              {HABIT_CATEGORIES.map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <MenuItem key={cat.id} value={cat.id}>
+                    <Chip
+                      icon={<Icon fontSize="small" />}
+                      label={cat.label}
+                      size="small"
+                      sx={{
+                        bgcolor: cat.color,
+                        fontWeight: 600,
+                        color: "black",
+                        cursor: "pointer",
+                        "& .MuiChip-icon": { color: "black" },
+                      }}
+                    />
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
 
@@ -181,8 +242,18 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
           </Box>
 
           <Box>
-            <Typography variant="body2" sx={{ mb: 1 }}>Description</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Typography variant="body2">Description</Typography>
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                <IconButton size="small" onClick={() => insertMarkdown("**", "**")} sx={{ bgcolor: "rgba(0,0,0,0.04)" }}><FormatBoldIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={() => insertMarkdown("*", "*")} sx={{ bgcolor: "rgba(0,0,0,0.04)" }}><FormatItalicIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={() => insertMarkdown("`", "`")} sx={{ bgcolor: "rgba(0,0,0,0.04)" }}><CodeIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={() => insertMarkdown("[", "](url)")} sx={{ bgcolor: "rgba(0,0,0,0.04)" }}><LinkIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={() => insertMarkdown("- ")} sx={{ bgcolor: "rgba(0,0,0,0.04)" }}><FormatListBulletedIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
             <TextField
+              inputRef={descriptionRef}
               fullWidth
               multiline
               rows={4}
@@ -191,6 +262,30 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               sx={{ "& .MuiOutlinedInput-root": { bgcolor: "rgba(0,0,0,0.04)", borderRadius: 3 } }}
             />
+            {formData.description && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: "rgba(0,0,0,0.02)", borderRadius: 3, border: "1px dashed rgba(0,0,0,0.1)" }}>
+                <Typography variant="caption" sx={{ display: 'block', mb: 1, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Preview
+                </Typography>
+                <Box sx={{ 
+                  fontSize: "0.875rem",
+                  lineHeight: 1.5,
+                  "& p": { m: 0, mb: 1 },
+                  "& p:last-child": { mb: 0 },
+                  "& ul": { m: 0, pl: 2.5, mb: 1, listStyleType: "disc" },
+                  "& ol": { m: 0, pl: 2.5, mb: 1, listStyleType: "decimal" },
+                  "& li": { mb: 0.5 },
+                  "& h1, & h2, & h3": { m: 0, mb: 1, fontWeight: 800, lineHeight: 1.2 },
+                  "& h1": { fontSize: "1.4em" },
+                  "& h2": { fontSize: "1.2em" },
+                  "& h3": { fontSize: "1.1em" },
+                  "& strong": { fontWeight: 800 },
+                  "& code": { bgcolor: "rgba(0,0,0,0.05)", px: 0.5, py: 0.2, borderRadius: 1, fontFamily: "monospace" }
+                }}>
+                  <ReactMarkdown>{formData.description}</ReactMarkdown>
+                </Box>
+              </Box>
+            )}
           </Box>
 
           <Button
