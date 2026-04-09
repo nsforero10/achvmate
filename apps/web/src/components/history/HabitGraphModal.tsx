@@ -59,7 +59,7 @@ export function HabitGraphModal({ habit, onClose }: { habit: any, onClose: () =>
       fullWidth
       PaperProps={{ 
         sx: { 
-          borderRadius: 4, 
+          borderRadius: 3, 
           p: 2,
           bgcolor: "background.paper",
         } 

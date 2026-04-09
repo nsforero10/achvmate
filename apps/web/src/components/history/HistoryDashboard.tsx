@@ -8,42 +8,48 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import { HistoryCalendarView } from "./HistoryCalendarView";
 import { HistoryGalleryView } from "./HistoryGalleryView";
+import { PageLayout } from "../layout/PageLayout";
+import { DashboardHeader } from "../habits/DashboardHeader";
 
 export function HistoryDashboard({ habits }: { habits: any[] }) {
   const [tabIndex, setTabIndex] = useState(0);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  return (
-    <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-      <Box sx={{ px: 4, pt: 4, pb: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 3 }}>
-          History Analytics
-        </Typography>
-        
-        <Tabs 
-          value={tabIndex} 
-          onChange={(e, v) => setTabIndex(v)}
-          sx={{
-            minHeight: 36,
-            "& .MuiTab-root": {
-              textTransform: "none",
-              fontWeight: 600,
-              fontSize: "1rem",
-              minHeight: 36,
-              mr: 2,
-            }
-          }}
-        >
-          <Tab label="Contribution Map" disableRipple />
-          <Tab label="Habit Tracks" disableRipple />
-        </Tabs>
-      </Box>
+  const today = new Date();
+  const dateString = today.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-      <Box sx={{ flexGrow: 1, overflowY: "auto", p: 4, pt: 2 }}>
+  const tabs = (
+    <Box sx={{ px: 4, pb: 1 }}>
+      <Tabs 
+        value={tabIndex} 
+        onChange={(e, v) => setTabIndex(v)}
+        sx={{
+          minHeight: 36,
+          "& .MuiTab-root": {
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "1rem",
+            minHeight: 36,
+            mr: 2,
+          }
+        }}
+      >
+        <Tab label="Contribution Map" disableRipple />
+        <Tab label="Habit Tracks" disableRipple />
+      </Tabs>
+    </Box>
+  );
+
+  return (
+    <PageLayout
+      header={<DashboardHeader title="History Analytics" dateString={dateString} />}
+      middleComponent={tabs}
+    >
+      <Box sx={{ p: 2 }}>
         {tabIndex === 0 && <HistoryCalendarView habits={habits} />}
         {tabIndex === 1 && <HistoryGalleryView habits={habits} />}
       </Box>
-    </Box>
+    </PageLayout>
   );
 }

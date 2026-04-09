@@ -13,6 +13,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { PageLayout } from "../layout/PageLayout";
 
 interface HabitManagerProps {
   initialHabits: any[];
@@ -100,40 +101,28 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
 
   return (
     <>
-      <DashboardHeader dateString={dateString} onOpenNew={handleOpenNew} />
-        <CalendarStrip />
-      
-      <Box
-        sx={{
-          flexGrow: 1,
-          bgcolor: "background.paper",
-          m: 2,
-          mt: 0,
-          borderRadius: 4,
-          border: isDark ? "1px solid rgba(255,255,255,0.05)" : "none",
-          boxShadow: isDark ? "none" : "0 10px 40px rgba(0,0,0,0.05)",
-          p: 4,
-          overflowX: "auto",
-          display: "flex",
-          gap: 3,
-        }}
+      <PageLayout
+        header={<DashboardHeader title="Habit track" dateString={dateString} greeting="Welcome back, check your habits" onOpenNew={handleOpenNew} />}
+        middleComponent={<CalendarStrip />}
       >
-        {habits.map((h) => {
-          const todayStr = new Date().toISOString().split('T')[0];
-          const isCompletedToday = h.entries?.some((e: any) => e.date.startsWith(todayStr) && e.completed);
+        <Box sx={{ display: "flex", gap: 3, flexWrap: "nowrap", flexGrow: 1 }}>
+          {habits.map((h) => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const isCompletedToday = h.entries?.some((e: any) => e.date.startsWith(todayStr) && e.completed);
 
-          return (
-            <HabitCard
-              key={h.id}
-              habit={h}
-              completed={isCompletedToday}
-              onToggleComplete={handleToggleComplete}
-              onEdit={handleEdit}
-              onDelete={promptDelete}
-            />
-          );
-        })}
-      </Box>
+            return (
+              <HabitCard
+                key={h.id}
+                habit={h}
+                completed={isCompletedToday}
+                onToggleComplete={handleToggleComplete}
+                onEdit={handleEdit}
+                onDelete={promptDelete}
+              />
+            );
+          })}
+        </Box>
+      </PageLayout>
 
       <HabitFormModal
         open={modalOpen}

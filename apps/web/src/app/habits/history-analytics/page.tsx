@@ -30,28 +30,5 @@ export default async function HabitHistoryPage() {
     console.error("Initial fetch error:", e);
   }
 
-  return (
-    <Box 
-      sx={{ 
-        display: "flex", 
-        height: "100vh", 
-        bgcolor: "transparent", 
-        p: 2, 
-      }}
-    >
-      <Sidebar />
-      <Box
-        sx={{
-          flexGrow: 1,
-          borderRadius: 4,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.02)",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
-      >
-        <HistoryDashboard habits={initialHabits} />
-      </Box>
-    </Box>
-  );
+  return <HistoryDashboard habits={initialHabits} />;
 }

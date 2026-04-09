@@ -128,7 +128,7 @@ export function LoginCard() {
         sx={{
           width: "100%",
           maxWidth: 360,
-          borderRadius: 4,
+          borderRadius: 3,
           border: `1px solid ${theme.palette.divider}`,
           boxShadow: isDark
             ? "0 8px 40px rgba(0,0,0,0.5)"

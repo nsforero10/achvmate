@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import Tooltip from "@mui/material/Tooltip";
+import { alpha, lighten, darken, useTheme } from "@mui/material/styles";
 
 import EditIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
@@ -45,6 +46,8 @@ export function HabitCard({
   onDelete,
 }: HabitCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const config = getCategoryConfig(habit.categoryId);
   const Icon = config.icon;
 
@@ -68,9 +71,10 @@ export function HabitCard({
       sx={{
         minWidth: 250,
         minHeight: 340,
-        bgcolor: config.color,
-        color: "#1a1a1a",
-        borderRadius: 4,
+        bgcolor: isDark ? darken(config.color, 0.7) : lighten(config.color, 0.6),
+        color: isDark ? lighten(config.color, 0.4) : darken(config.color, 0.6),
+        border: `1px solid ${isDark ? darken(config.color, 0.5) : lighten(config.color, 0.2)}`,
+        borderRadius: 3,
         p: 2.5,
         display: "flex",
         flexDirection: "column",
@@ -134,13 +138,13 @@ export function HabitCard({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      border: "1px solid rgba(0,0,0,0.4)",
-                      bgcolor: isActive ? "rgba(0,0,0,0.05)" : "transparent",
+                      border: "1px solid currentColor",
+                      bgcolor: isActive ? "currentColor" : "transparent",
                       color: "inherit",
                       fontWeight: isActive ? 800 : 400,
                     }}
                   >
-                    <Typography variant="caption" sx={{ fontSize: 10 }}>{day}</Typography>
+                    <Typography variant="caption" sx={{ fontSize: 10, color: isActive ? "background.paper" : "inherit" }}>{day}</Typography>
                   </Box>
                 );
               })}
@@ -177,7 +181,7 @@ export function HabitCard({
           <Typography 
             variant="h4" 
             align="center"
-            sx={{ fontWeight: 300, lineHeight: 1.1, letterSpacing: "-0.02em", color: "#1a1a1a" }}
+            sx={{ fontWeight: 300, lineHeight: 1.1, letterSpacing: "-0.02em", color: "inherit" }}
           >
             {habit.name}
           </Typography>
@@ -209,16 +213,16 @@ export function HabitCard({
             width: 32,
             height: 32,
             borderRadius: 2,
-            border: "1.5px solid #1a1a1a",
+            border: "1.5px solid currentColor",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            bgcolor: completed ? "#1a1a1a" : "transparent",
+            bgcolor: completed ? "currentColor" : "transparent",
             mb: 0.5
           }}
         >
-          {completed && <Typography sx={{ color: config.color, lineHeight: 1 }}>✓</Typography>}
+          {completed && <Typography sx={{ color: isDark ? "background.paper" : "background.paper", lineHeight: 1 }}>✓</Typography>}
         </Box>
       </Box>
     </Card>

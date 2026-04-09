@@ -37,30 +37,5 @@ export default async function HabitTrackPage() {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric", year: "numeric" };
   const dateString = today.toLocaleDateString("en-US", options);
 
-  return (
-    <Box 
-      sx={{ 
-        display: "flex", 
-        height: "100vh", 
-        bgcolor: "transparent", 
-        p: 2, 
-      }}
-    >
-      <Sidebar />
-      <Box
-        sx={{
-          flexGrow: 1,
-          borderRadius: 4,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.02)",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
-      >
-        <HabitManager initialHabits={initialHabits} dateString={dateString} />
-        {/* <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        </Box> */}
-      </Box>
-    </Box>
-  );
+  return <HabitManager initialHabits={initialHabits} dateString={dateString} />;
 }
