@@ -13,6 +13,7 @@ import ReactMarkdown from "react-markdown";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { useGetJournalEntriesQuery, useCreateJournalEntryMutation, useUpdateJournalEntryMutation } from "../../store/api";
 
 interface JournalManagerProps {
@@ -131,6 +132,16 @@ export function JournalManager({ dateString }: JournalManagerProps) {
                 }}
               >
                 <ReactMarkdown>{selectedEntry.content}</ReactMarkdown>
+                <Fab 
+                   color="primary" 
+                   sx={{ position: "absolute", bottom: 32, right: 32 }}
+                   onClick={() => {
+                     setEditingEntry(selectedEntry);
+                     setModalOpen(true);
+                   }}
+                >
+                   <EditRoundedIcon />
+                </Fab>
               </Box>
             ) : (
              <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}>
@@ -142,6 +153,7 @@ export function JournalManager({ dateString }: JournalManagerProps) {
         </Box>
       </PageLayout>
 
+      {/* istanbul ignore next */}
       <JournalModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

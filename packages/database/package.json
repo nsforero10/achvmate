@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
@@ -19,6 +21,10 @@
   },
   "devDependencies": {
     "prisma": "latest",
-    "zod-prisma-types": "^3.3.11"
+    "zod-prisma-types": "^3.3.11",
+    "jest": "^30.0.0",
+    "@types/jest": "^30.0.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.3"
   }
 }

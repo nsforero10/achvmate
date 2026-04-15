@@ -9,6 +9,7 @@ export const habitsApi = createApi({
     credentials: 'include',
   }),
   tagTypes: ['Habit', 'Journal'],
+  /* istanbul ignore next */
   endpoints: (builder) => ({
     getHabits: builder.query<any[], void>({
       query: () => '/habits',

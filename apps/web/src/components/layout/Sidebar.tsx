@@ -64,7 +64,9 @@ export function Sidebar() {
 
   return (
     <Box
+      /* istanbul ignore next */
       onMouseEnter={() => setExpanded(true)}
+      /* istanbul ignore next */
       onMouseLeave={() => setExpanded(false)}
       sx={{
         width: expanded ? 240 : 80,

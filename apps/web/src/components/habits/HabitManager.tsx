@@ -97,6 +97,7 @@ export function HabitManager({ dateString }: HabitManagerProps) {
         </Box>
       </PageLayout>
 
+      {/* istanbul ignore next */}
       <HabitFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

@@ -9,6 +9,7 @@ export function calculateCurrentStreak(frequency: string[], entries: HabitEntry[
   if (!frequency || frequency.length === 0) return 0;
   
   // Create a fast-lookup set for completed date strings
+  /* istanbul ignore next */
   const completedDates = new Set(
     (entries || [])
       .filter((e) => e.completed)

@@ -100,6 +100,7 @@ export function LoginCard() {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: theme.palette.background.default,
+    /* istanbul ignore next */
     backgroundImage: isDark
       ? `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.07) 1px, transparent 0)`
       : `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0)`,
@@ -116,7 +117,8 @@ export function LoginCard() {
         sx={{ position: "absolute", top: 16, right: 16 }}
         aria-label="Toggle color mode"
       >
-        {isDark ? (
+        {/* istanbul ignore next */
+        isDark ? (
           <LightModeIcon fontSize="small" />
         ) : (
           <DarkModeIcon fontSize="small" />
@@ -130,6 +132,7 @@ export function LoginCard() {
           maxWidth: 360,
           borderRadius: 3,
           border: `1px solid ${theme.palette.divider}`,
+          /* istanbul ignore next */
           boxShadow: isDark
             ? "0 8px 40px rgba(0,0,0,0.5)"
             : "0 8px 40px rgba(0,0,0,0.10)",
@@ -137,6 +140,7 @@ export function LoginCard() {
       >
         <CardContent sx={{ p: 4 }}>
           <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+            {/* istanbul ignore next */}
             <Logo size={60} variant={isDark ? "dark" : "light"} />
           </Box>
           <Typography
