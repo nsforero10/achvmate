@@ -22,6 +22,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 
 import { HABIT_CATEGORIES } from "@/lib/categories";
+import { useTheme, lighten, darken } from "@mui/material/styles";
 
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 const DAY_CODES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -43,6 +44,8 @@ interface HabitFormModalProps {
 }
 
 export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFormModalProps) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [formData, setFormData] = useState<HabitFormData>({
     name: "",
     categoryId: "wellness",
@@ -151,10 +154,10 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
                     label={cat.label}
                     size="small"
                     sx={{
-                      bgcolor: cat.color,
+                      bgcolor: isDark ? darken(cat.color, 0.7) : lighten(cat.color, 0.6),
                       fontWeight: 600,
-                      color: "black",
-                      "& .MuiChip-icon": { color: "black" },
+                      color: isDark ? lighten(cat.color, 0.4) : darken(cat.color, 0.6),
+                      "& .MuiChip-icon": { color: isDark ? lighten(cat.color, 0.4) : darken(cat.color, 0.6) },
                     }}
                   />
                 );
@@ -170,11 +173,11 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
                       label={cat.label}
                       size="small"
                       sx={{
-                        bgcolor: cat.color,
+                        bgcolor: isDark ? darken(cat.color, 0.7) : lighten(cat.color, 0.6),
                         fontWeight: 600,
-                        color: "black",
+                        color: isDark ? lighten(cat.color, 0.4) : darken(cat.color, 0.6),
                         cursor: "pointer",
-                        "& .MuiChip-icon": { color: "black" },
+                        "& .MuiChip-icon": { color: isDark ? lighten(cat.color, 0.4) : darken(cat.color, 0.6) },
                       }}
                     />
                   </MenuItem>
@@ -224,10 +227,10 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      border: "1px solid",
-                      borderColor: isActive ? "black" : "rgba(0,0,0,0.2)",
-                      color: isActive ? "white" : "black",
-                      bgcolor: isActive ? "black" : "transparent",
+                      border: isActive ? "none" : "1px solid",
+                      borderColor: isActive ? "transparent" : (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)"),
+                      color: isActive ? "background.paper" : "text.primary",
+                      bgcolor: isActive ? "text.primary" : "transparent",
                       cursor: "pointer",
                       fontWeight: 600,
                       fontSize: 14,

@@ -17,7 +17,7 @@ async function main() {
 
   let createdCount = 0;
 
-  for (let i = 180; i > 0; i--) {
+  for (let i = 365; i > 0; i--) {
     const d = new Date(today.getTime());
     d.setDate(d.getDate() - i);
     
@@ -26,16 +26,24 @@ async function main() {
 
     for (const habit of habits) {
       if (habit.frequency.includes(dayCode)) {
-         // Randomly assign it a ~70% chance of being completed
-         const isCompleted = Math.random() > 0.3;
+         // Guarantee a flawless streak for the last 45 days leading up to today to demonstrate the feature!
+         // Days older than 45 get a 50% random generation rate
+         const isCompleted = i <= 45 ? true : Math.random() > 0.5;
          
          if (isCompleted) {
            await prisma.dailyTrackEntry.upsert({
              where: { habitId_date: { habitId: habit.id, date: d } },
-             update: {},
+             update: { completed: true },
              create: { habitId: habit.id, date: d, completed: true },
            });
            createdCount++;
+         } else {
+           // Provide a few explicit boolean false records for history padding
+           await prisma.dailyTrackEntry.upsert({
+             where: { habitId_date: { habitId: habit.id, date: d } },
+             update: { completed: false },
+             create: { habitId: habit.id, date: d, completed: false },
+           });
          }
       }
     }

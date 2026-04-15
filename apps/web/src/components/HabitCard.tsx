@@ -13,9 +13,11 @@ import EditIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import ReactMarkdown from "react-markdown";
 
 import { getCategoryConfig } from "@/lib/categories";
+import { calculateCurrentStreak } from "@/lib/streak";
 
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 const DAY_CODES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -28,6 +30,7 @@ interface HabitProps {
   frequency: string[];
   startTime: string | null;
   endTime: string | null;
+  entries?: any[];
 }
 
 interface HabitCardProps {
@@ -50,6 +53,7 @@ export function HabitCard({
   const isDark = theme.palette.mode === "dark";
   const config = getCategoryConfig(habit.categoryId);
   const Icon = config.icon;
+  const streak = calculateCurrentStreak(habit.frequency, habit.entries || []);
 
   const formatTime = (timeStr: string | null) => {
     if (!timeStr) return { time: "--:--", period: "" };
@@ -93,22 +97,31 @@ export function HabitCard({
           </Typography>
         </Box>
 
-        {isHovered ? (
-          <Box sx={{ display: "flex", gap: 0 }}>
-            <Tooltip title="Edit">
-              <IconButton size="small" onClick={() => onEdit?.(habit)} sx={{ color: "inherit", p: 0.5 }}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton size="small" onClick={() => onDelete?.(habit.id)} sx={{ color: "inherit", p: 0.5 }}>
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        ) : (
-          <Icon fontSize="medium" sx={{ color: "#1a1a1a", opacity: 0.9 }} />
-        )}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {streak > 0 && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.25, color: isDark ? "#ff9800" : "#e65100" }}>
+              <Typography sx={{ fontWeight: 800, fontSize: 13, lineHeight: 1 }}>{streak}</Typography>
+              <LocalFireDepartmentIcon sx={{ fontSize: 16 }} />
+            </Box>
+          )}
+
+          {isHovered ? (
+            <Box sx={{ display: "flex", gap: 0 }}>
+              <Tooltip title="Edit">
+                <IconButton size="small" onClick={() => onEdit?.(habit)} sx={{ color: "inherit", p: 0.5 }}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton size="small" onClick={() => onDelete?.(habit.id)} sx={{ color: "inherit", p: 0.5 }}>
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          ) : (
+            <Icon fontSize="medium" sx={{ color: "inherit", opacity: 0.9 }} />
+          )}
+        </Box>
       </Box>
 
       {isHovered ? (
@@ -151,11 +164,11 @@ export function HabitCard({
             </Box>
 
             {habit.description && (
-              <Box sx={{ mt: 1 }}>
+              <Box sx={{ mt: 1, flexGrow: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <Typography variant="caption" sx={{ display: "block", mb: 0.2, opacity: 0.8 }}>Description</Typography>
                 <Box sx={{ 
                   overflowY: "auto", 
-                  maxHeight: 120,
+                  flexGrow: 1,
                   lineHeight: 1.3,
                   fontSize: "0.75rem",
                   "& p": { m: 0, mb: 0.5 },

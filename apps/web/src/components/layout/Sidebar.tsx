@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import FormatListBulletedRoundedIcon from "@mui/icons-material/FormatListBulletedRounded";
 import CalendarTodayRoundedIcon from "@mui/icons-material/CalendarTodayRounded";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -108,27 +109,31 @@ export function Sidebar() {
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flexGrow: 1 }}>
-        <Link href="/habits/daily" passHref legacyBehavior>
-          <a style={{ textDecoration: 'none' }}>
+        <Link href="/habits/daily" passHref>
             <NavItemContent 
               icon={<FormatListBulletedRoundedIcon />} 
               label="Daily Habits" 
-              active={pathname?.includes("/habits/daily")} 
+              active={pathname?.includes("/habits")} 
             />
-          </a>
         </Link>
         
-        <Link href="/habits/history-analytics" passHref legacyBehavior>
-          <a style={{ textDecoration: 'none' }}>
+        <Link href="/habits/history-analytics" passHref>
             <NavItemContent 
               icon={<QueryStatsRoundedIcon />} 
               label="Analytics" 
-              active={pathname?.includes("/habits/history-analytics")} 
+              active={pathname?.includes("/analytics")} 
             />
-          </a>
         </Link>
 
         <NavItemContent icon={<CalendarTodayRoundedIcon />} label="Schedule" />
+        
+        <Link href="/journal" passHref>
+            <NavItemContent 
+              icon={<MenuBookRoundedIcon />} 
+              label="Daily Journal" 
+              active={pathname?.includes("/journal")} 
+            />
+        </Link>
         <NavItemContent icon={<PersonRoundedIcon />} label="Profile" />
       </Box>
 

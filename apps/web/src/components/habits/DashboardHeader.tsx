@@ -11,9 +11,10 @@ interface DashboardHeaderProps {
   dateString?: string;
   greeting?: string;
   onOpenNew?: () => void;
+  actionLabel?: string;
 }
 
-export function DashboardHeader({ title, dateString, greeting, onOpenNew }: DashboardHeaderProps) {
+export function DashboardHeader({ title, dateString, greeting, onOpenNew, actionLabel }: DashboardHeaderProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -59,7 +60,7 @@ export function DashboardHeader({ title, dateString, greeting, onOpenNew }: Dash
                 "&:hover": { borderColor: isDark ? "#fff" : "#111", bgcolor: "transparent" },
               }}
             >
-              New Habit
+              {actionLabel || "New Habit"}
             </Button>
           )}
           <Avatar

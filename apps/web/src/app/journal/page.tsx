@@ -1,8 +1,8 @@
-import { HabitManager } from "../../../components/habits/HabitManager";
-import { auth } from "../../../auth";
+import { auth } from "../../auth";
 import { redirect } from "next/navigation";
+import { JournalManager } from "../../components/journal/JournalManager";
 
-export default async function HabitTrackPage() {
+export default async function JournalPage() {
   const session = await auth();
   if (!session) {
     redirect("/login");
@@ -12,5 +12,5 @@ export default async function HabitTrackPage() {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric", year: "numeric" };
   const dateString = today.toLocaleDateString("en-US", options);
 
-  return <HabitManager dateString={dateString} />;
+  return <JournalManager dateString={dateString} />;
 }

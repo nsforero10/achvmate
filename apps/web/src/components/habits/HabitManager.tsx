@@ -14,35 +14,28 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { PageLayout } from "../layout/PageLayout";
+import { useGetHabitsQuery, useCreateHabitMutation, useUpdateHabitMutation, useDeleteHabitMutation, useToggleHabitCompleteMutation } from "../../store/api";
 
 interface HabitManagerProps {
-  initialHabits: any[];
   dateString: string;
 }
 
-export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
-  const [habits, setHabits] = useState(initialHabits);
+export function HabitManager({ dateString }: HabitManagerProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<any>(null);
   const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  // RTK Query Hooks
+  const { data: habits = [], isLoading } = useGetHabitsQuery();
+  const [createHabit] = useCreateHabitMutation();
+  const [updateHabit] = useUpdateHabitMutation();
+  const [deleteHabit] = useDeleteHabitMutation();
+  const [toggleHabit] = useToggleHabitCompleteMutation();
 
-  const fetchHabits = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/habits`, {
-        credentials: "include",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setHabits(data);
-      }
-    } catch (e) {
-      console.error("Fetch habits error:", e);
-    }
-  };
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(todayStr);
 
   const handleOpenNew = () => {
     setEditingHabit(null);
@@ -51,22 +44,11 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
 
   const handleSubmitHabit = async (data: HabitFormData) => {
     if (editingHabit) {
-      await fetch(`${API_BASE}/habits/${editingHabit.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      await updateHabit({ id: editingHabit.id, data }).unwrap();
     } else {
-      await fetch(`${API_BASE}/habits`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      await createHabit(data).unwrap();
     }
     setModalOpen(false);
-    fetchHabits();
   };
 
   const handleEdit = (habit: any) => {
@@ -80,42 +62,33 @@ export function HabitManager({ initialHabits, dateString }: HabitManagerProps) {
 
   const confirmDelete = async () => {
     if (!habitToDelete) return;
-    await fetch(`${API_BASE}/habits/${habitToDelete}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    await deleteHabit(habitToDelete).unwrap();
     setHabitToDelete(null);
-    fetchHabits();
   };
 
-  const handleToggleComplete = async (habitId: string) => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    await fetch(`${API_BASE}/habits/${habitId}/toggle`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ date: todayStr }),
-    });
-    fetchHabits();
+  const handleToggleComplete = async (habitId: string, customDate?: string) => {
+    // Determine the date to toggle (either selected past date or today's standard completion)
+    const toggleTarget = typeof customDate === 'string' ? customDate : todayStr;
+    await toggleHabit({ habitId, date: toggleTarget }).unwrap();
   };
 
   return (
     <>
       <PageLayout
         header={<DashboardHeader title="Habit track" dateString={dateString} greeting="Welcome back, check your habits" onOpenNew={handleOpenNew} />}
-        middleComponent={<CalendarStrip />}
+        middleComponent={<CalendarStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} />}
       >
         <Box sx={{ display: "flex", gap: 3, flexWrap: "nowrap", flexGrow: 1 }}>
-          {habits.map((h) => {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const isCompletedToday = h.entries?.some((e: any) => e.date.startsWith(todayStr) && e.completed);
+          {isLoading && <Typography sx={{ p: 2 }}>Loading habits...</Typography>}
+          {!isLoading && habits.map((h: any) => {
+            const isCompletedOnSelected = h.entries?.some((e: any) => e.date.startsWith(selectedDate) && e.completed);
 
             return (
               <HabitCard
                 key={h.id}
                 habit={h}
-                completed={isCompletedToday}
-                onToggleComplete={handleToggleComplete}
+                completed={isCompletedOnSelected}
+                onToggleComplete={(id) => handleToggleComplete(id, selectedDate)}
                 onEdit={handleEdit}
                 onDelete={promptDelete}
               />

@@ -10,11 +10,22 @@ import { HistoryCalendarView } from "./HistoryCalendarView";
 import { HistoryGalleryView } from "./HistoryGalleryView";
 import { PageLayout } from "../layout/PageLayout";
 import { DashboardHeader } from "../habits/DashboardHeader";
+import { HabitFormModal, HabitFormData } from "../HabitFormModal";
+import { useGetHabitsQuery, useCreateHabitMutation } from "../../store/api";
 
-export function HistoryDashboard({ habits }: { habits: any[] }) {
+export function HistoryDashboard() {
   const [tabIndex, setTabIndex] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
+  const { data: habits = [], isLoading } = useGetHabitsQuery();
+  const [createHabit] = useCreateHabitMutation();
+
+  const handleCreateSubmit = async (data: HabitFormData) => {
+    await createHabit(data).unwrap();
+    setModalOpen(false);
+  };
 
   const today = new Date();
   const dateString = today.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -32,6 +43,14 @@ export function HistoryDashboard({ habits }: { habits: any[] }) {
             fontSize: "1rem",
             minHeight: 36,
             mr: 2,
+            color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.6)",
+            transition: "color 0.2s",
+            "&.Mui-selected": {
+              color: isDark ? "#fff" : "#111",
+            }
+          },
+          "& .MuiTabs-indicator": {
+            backgroundColor: isDark ? "#fff" : "#111"
           }
         }}
       >
@@ -42,14 +61,23 @@ export function HistoryDashboard({ habits }: { habits: any[] }) {
   );
 
   return (
-    <PageLayout
-      header={<DashboardHeader title="History Analytics" dateString={dateString} />}
-      middleComponent={tabs}
-    >
-      <Box sx={{ p: 2 }}>
-        {tabIndex === 0 && <HistoryCalendarView habits={habits} />}
-        {tabIndex === 1 && <HistoryGalleryView habits={habits} />}
-      </Box>
-    </PageLayout>
+    <>
+      <PageLayout
+        header={<DashboardHeader title="History Analytics" dateString={dateString} onOpenNew={() => setModalOpen(true)} actionLabel="New Habit" />}
+        middleComponent={tabs}
+      >
+        <Box sx={{ p: 2 }}>
+          {isLoading && <Typography sx={{ p: 2 }}>Loading analytics...</Typography>}
+          {!isLoading && tabIndex === 0 && <HistoryCalendarView habits={habits} />}
+          {!isLoading && tabIndex === 1 && <HistoryGalleryView habits={habits} />}
+        </Box>
+      </PageLayout>
+
+      <HabitFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleCreateSubmit}
+      />
+    </>
   );
 }

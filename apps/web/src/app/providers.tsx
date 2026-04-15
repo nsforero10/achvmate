@@ -5,6 +5,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SessionProvider } from "next-auth/react";
 import { useMemo, useState, createContext, useContext } from "react";
+import { StoreProvider } from "./StoreProvider";
 
 export const ColorModeContext = createContext({ toggle: () => {} });
 export const useColorMode = () => useContext(ColorModeContext);
@@ -31,6 +32,20 @@ function buildTheme(mode: "light" | "dark") {
               ? "repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 16px)"
               : "repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 2px, transparent 2px, transparent 15px)",
             backgroundColor: themeParam.palette.background.default,
+          },
+          "*::-webkit-scrollbar": {
+            width: "6px",
+            height: "6px",
+          },
+          "*::-webkit-scrollbar-track": {
+            background: "transparent",
+          },
+          "*::-webkit-scrollbar-thumb": {
+            background: themeParam.palette.mode === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)",
+            borderRadius: "10px",
+          },
+          "*::-webkit-scrollbar-thumb:hover": {
+            background: themeParam.palette.mode === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)",
           },
         }),
       },
@@ -70,7 +85,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AppRouterCacheProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <SessionProvider>{children}</SessionProvider>
+          <StoreProvider>
+            <SessionProvider>{children}</SessionProvider>
+          </StoreProvider>
         </ThemeProvider>
       </AppRouterCacheProvider>
     </ColorModeContext.Provider>
