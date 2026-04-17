@@ -13,12 +13,10 @@ export const cookieExtractor = (req: any) => {
         if (token.startsWith('"') && token.endsWith('"')) {
           token = token.slice(1, -1);
         }
-        console.log(`[API JWT Extractor] Found Matching Cookie: ${name} -> ${token.substring(0, 15)}...`);
         break;
       }
     }
   }
-  if (!token) console.log(`[API JWT Extractor] No token found in incoming headers: ${JSON.stringify(req?.headers?.cookie)}`);
   return token;
 };
 

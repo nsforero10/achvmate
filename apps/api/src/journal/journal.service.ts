@@ -12,7 +12,6 @@ export class JournalService {
       data: {
         title: createJournalDto.title,
         content: createJournalDto.content,
-        // If a specific date is provided map it natively, otherwise Postgres falls back to @default(now())
         ...(createJournalDto.date && { date: new Date(createJournalDto.date) }),
         user: { connect: { id: userId } },
       },

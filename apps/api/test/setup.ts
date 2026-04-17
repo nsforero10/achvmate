@@ -6,8 +6,6 @@ export const cleanDatabase = async () => {
     return;
   }
   
-  // Note: Depending on your schema logic, you might just truncate or delete specific tables
-  // We specify the order manually if there are foreign keys, or ideally use prisma raw TRUNCATE CASCADE
   await prisma.$transaction([
     prisma.habit.deleteMany(),
     prisma.user.deleteMany(),

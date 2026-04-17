@@ -4,7 +4,6 @@ describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
 
   beforeEach(() => {
-    // Override console.log for silent tests
     jest.spyOn(console, 'log').mockImplementation(() => {});
     strategy = new JwtStrategy();
   });

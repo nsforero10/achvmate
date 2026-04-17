@@ -27,7 +27,6 @@ export function HabitManager({ dateString }: HabitManagerProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  // RTK Query Hooks
   const { data: habits = [], isLoading } = useGetHabitsQuery();
   const [createHabit] = useCreateHabitMutation();
   const [updateHabit] = useUpdateHabitMutation();
@@ -67,7 +66,6 @@ export function HabitManager({ dateString }: HabitManagerProps) {
   };
 
   const handleToggleComplete = async (habitId: string, customDate?: string) => {
-    // Determine the date to toggle (either selected past date or today's standard completion)
     const toggleTarget = typeof customDate === 'string' ? customDate : todayStr;
     await toggleHabit({ habitId, date: toggleTarget }).unwrap();
   };

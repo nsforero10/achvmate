@@ -82,10 +82,8 @@ describe('JournalManager Structural Specs', () => {
 
   it('mounts markdown views explicitly resolving structure map', () => {
     render(<JournalManager dateString="Today" />);
-    // Testing ReactMarkdown conversion natively
     expect(screen.getByText('Day 1')).toBeInTheDocument();
     
-    // Markdown H1 is rendered textually
     expect(screen.getByText('# Hello World!')).toBeInTheDocument();
   });
 
@@ -99,9 +97,8 @@ describe('JournalManager Structural Specs', () => {
     });
 
     render(<JournalManager dateString="Today" />);
-    expect(screen.getByText('Testing 1')).toBeInTheDocument(); // By default first is selected
+    expect(screen.getByText('Testing 1')).toBeInTheDocument();
 
-    // Click secondary payload
     fireEvent.click(screen.getByText('Day 2'));
     
     expect(screen.getByText('Testing 2')).toBeInTheDocument();
@@ -121,18 +118,14 @@ describe('JournalManager Structural Specs', () => {
   it('triggers edit mappings when selecting specific entries linking safely to updates', async () => {
     render(<JournalManager dateString="Today" />);
     
-    // We can assume EditRoundedIcon is natively rendering in DOM as an svg inside the Fab binding 
-    // Mui Fab buttons are typically aria-labeled or clicked directly by tag if unique
     const editBtn = screen.getByTestId('EditRoundedIcon').closest('button')!;
     fireEvent.click(editBtn);
-    
-    // Trigger submit mapping
     fireEvent.click(screen.getByText('Submit'));
 
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalledWith({
-        id: '1', // Selected entry baseline id 
-        data: { title: 'New Journal', content: 'abc' } // Default mock payload
+        id: '1',
+        data: { title: 'New Journal', content: 'abc' }
       });
     });
   });

@@ -14,19 +14,16 @@ export function HistoryCalendarView({ habits }: { habits: any[] }) {
   const isDark = theme.palette.mode === "dark";
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  // Generate the last 364 days (52 weeks exactly for a nice grid)
   const days = useMemo(() => {
     const list = [];
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // normalize
+    today.setHours(0, 0, 0, 0);
     
-    // Start from 363 days ago to have exactly 364 days (52x7)
     for (let i = 363; i >= 0; i--) {
       const d = new Date(today.getTime());
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
       
-      // Calculate how many habits were completed on this day
       let completions = 0;
       let total = habits.length;
       

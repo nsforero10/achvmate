@@ -119,7 +119,7 @@ export function JournalManager({ dateString }: JournalManagerProps) {
           }}>
             {selectedEntry ? (
               <Box sx={{ 
-                  pb: 8, // Padding for Fab button
+                  pb: 8,
                   "& h1, & h2, & h3": { m: 0, mb: 1.5, fontWeight: 800, lineHeight: 1.2 },
                   "& h1": { fontSize: "2.5em", letterSpacing: "-0.02em" },
                   "& h2": { fontSize: "2em", letterSpacing: "-0.01em" },

@@ -9,7 +9,6 @@ describe('Categories Library Boundaries', () => {
   describe('getCategoryConfig', () => {
     it('should reliably translate categories to their objects', () => {
       expect(getCategoryConfig('health').color).toBe('#FFB5C5');
-      // Should fallback to the first element when invalid
       expect(getCategoryConfig('invalid_category').id).toBe('health'); 
     });
   });

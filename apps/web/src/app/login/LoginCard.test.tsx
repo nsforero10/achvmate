@@ -4,7 +4,7 @@ import { LoginCard } from './LoginCard';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-// Aggressive mocking for Next and remote logic
+
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }));
@@ -35,15 +35,11 @@ describe('LoginCard Client Component', () => {
 
   it('switches safely between Signup and Login states natively', () => {
     render(<LoginCard />);
-    
-    // Switch to create account
     fireEvent.click(screen.getByText('Create account'));
     
-    // Validation
     expect(screen.getByText(/Sign up to/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "Sign up" })).toBeInTheDocument();
     
-    // Switch back
     fireEvent.click(screen.getByText('Log in'));
     expect(screen.getByText(/Log in to/i)).toBeInTheDocument();
   });
@@ -100,7 +96,7 @@ describe('LoginCard Client Component', () => {
     (signIn as jest.Mock).mockResolvedValue({ error: null });
 
     render(<LoginCard />);
-    fireEvent.click(screen.getByText('Create account')); // Switch to signup
+    fireEvent.click(screen.getByText('Create account'));
     
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'new@example.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });

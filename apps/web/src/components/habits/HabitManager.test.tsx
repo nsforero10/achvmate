@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HabitManager } from './HabitManager';
 
-// Mock dependencies natively
+
 jest.mock('../../store/api', () => ({
   useGetHabitsQuery: jest.fn(),
   useCreateHabitMutation: jest.fn(),
@@ -21,7 +21,7 @@ jest.mock('next-auth/react', () => ({
   useSession: jest.fn(() => ({ data: null, status: 'unauthenticated' })),
 }));
 
-// Mock the child visual components to prevent recursive crashes
+
 jest.mock('../HabitCard', () => ({
   HabitCard: (props: any) => (
     <div data-testid="habit-card">
@@ -63,7 +63,7 @@ jest.mock('@mui/material/styles', () => ({
   useTheme: () => ({ palette: { mode: 'light', divider: '#ccc' } }),
 }));
 
-// Mock Color Mode / Providers context from Sidebar and Dashboard mapping
+
 jest.mock('../../app/providers', () => ({
   useColorMode: () => ({ toggle: jest.fn() }),
 }));
@@ -132,7 +132,7 @@ describe('HabitManager Client Render Mappings', () => {
   it('triggers form creation mounts and edits payload correctly', async () => {
     render(<HabitManager dateString="Today" />);
     
-    // Test creating new logic
+
     fireEvent.click(screen.getByText('Open New'));
     fireEvent.click(screen.getByText('Submit'));
     
@@ -140,11 +140,9 @@ describe('HabitManager Client Render Mappings', () => {
       expect(mockCreate).toHaveBeenCalledWith({ title: 'New' });
     });
 
-    // Test form cancellation logic dynamically dropping modal states cleanly
     fireEvent.click(screen.getByText('Open New'));
-    fireEvent.click(screen.getByText('Close Modal')); // Modals state is successfully flipped boolean
+    fireEvent.click(screen.getByText('Close Modal'));
     
-    // Test editing logic
     fireEvent.click(screen.getByText('Edit'));
     fireEvent.click(screen.getByText('Submit'));
     
@@ -156,14 +154,10 @@ describe('HabitManager Client Render Mappings', () => {
   it('executes boolean completion toggles successfully handling target dates', async () => {
     render(<HabitManager dateString="Today" />);
     
-    // Modify date
     fireEvent.click(screen.getByText('Select Date'));
-    
-    // Toggle habit
     fireEvent.click(screen.getByText('Toggle'));
     
     await waitFor(() => {
-      // Habit completion resolves against specific date payloads securely decoupled from general store arrays
       expect(mockToggle).toHaveBeenCalledWith({ habitId: '1', date: '2026-04-10' });
     });
   });

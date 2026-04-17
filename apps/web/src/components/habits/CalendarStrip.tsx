@@ -8,7 +8,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S"];
 
 interface CalendarStripProps {
-  selectedDate: string; // YYYY-MM-DD
+  selectedDate: string;
   onSelectDate: (date: string) => void;
 }
 
@@ -16,10 +16,9 @@ export function CalendarStrip({ selectedDate, onSelectDate }: CalendarStripProps
   const [weekOffset, setWeekOffset] = useState(0);
   const today = new Date();
   
-  // Create an array of Date objects for the current Sun-Sat week adjusted by the offset
   const weekDates = DAYS_SHORT.map((_, ix) => {
     const d = new Date();
-    const currentDay = d.getDay(); // 0-6
+    const currentDay = d.getDay();
     d.setDate(d.getDate() - currentDay + ix + (weekOffset * 7));
     return d;
   });
@@ -30,13 +29,11 @@ export function CalendarStrip({ selectedDate, onSelectDate }: CalendarStripProps
     const newOffset = weekOffset + direction;
     setWeekOffset(newOffset);
     
-    // Automatically select the last valid day of the target week
     const d = new Date();
     const currentDay = d.getDay();
     if (newOffset === 0) {
-      onSelectDate(d.toISOString().split('T')[0]); // Today
+      onSelectDate(d.toISOString().split('T')[0]);
     } else {
-      // For any past week, the last valid day is Saturday (index 6)
       d.setDate(d.getDate() - currentDay + 6 + (newOffset * 7));
       onSelectDate(d.toISOString().split('T')[0]);
     }
@@ -72,7 +69,6 @@ export function CalendarStrip({ selectedDate, onSelectDate }: CalendarStripProps
           const dateStr = dateObj.toISOString().split('T')[0];
           const isToday = dateStr === todayStr;
           const isSelected = dateStr === selectedDate;
-          // Don't allow clicking future days
           const isFuture = dateObj > today && dateStr !== todayStr;
           
           return (

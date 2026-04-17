@@ -71,7 +71,6 @@ export function HabitFormModal({ open, onClose, onSubmit, initialData }: HabitFo
 
     setFormData((prev) => ({ ...prev, description: newText }));
 
-    // Request browser to restore focus and selection after state update
     setTimeout(() => {
       input.focus();
       input.setSelectionRange(start + prefix.length, end + prefix.length);

@@ -15,7 +15,6 @@ export function HabitGraphModal({ habit, onClose }: { habit: any, onClose: () =>
   const isDark = theme.palette.mode === "dark";
   const config = getCategoryConfig(habit.categoryId);
 
-  // Parse last 30 days rolling data
   const data = useMemo(() => {
     const list: { date: string, completion: number }[] = [];
     const today = new Date();
@@ -34,7 +33,6 @@ export function HabitGraphModal({ habit, onClose }: { habit: any, onClose: () =>
       });
     }
 
-    // Apply a simple 3-day moving average to smooth the line
     const smoothedList = list.map((item, idx) => {
       let sum = 0;
       let count = 0;

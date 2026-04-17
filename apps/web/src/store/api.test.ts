@@ -14,7 +14,6 @@ describe('RTK Query API Store bindings', () => {
   });
 
   it('should strictly construct required querying endpoints', () => {
-    // We map out the explicit method signatures mapped functionally to RTK hooks
     expect(habitsApi.endpoints.getHabits).toBeDefined();
     expect(habitsApi.endpoints.createHabit).toBeDefined();
     expect(habitsApi.endpoints.updateHabit).toBeDefined();
