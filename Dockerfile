@@ -29,6 +29,9 @@ COPY --from=builder /app/turbo.json .
 # Ensure Prisma successfully maps the engine mappings cleanly since we are actively mapping bounds
 RUN npx prisma generate --schema=packages/database/prisma/schema.prisma || true
 
+# Inject dummy database URL specifically to bypass Prisma's strict build-time environment checks
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+
 # Extract pure build mappings structurally testing boundaries 
 RUN npx turbo run build --filter=@achvmate/api
 
