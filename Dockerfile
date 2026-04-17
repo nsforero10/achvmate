@@ -23,6 +23,8 @@ RUN npm install
 
 # Copy source maps over and compile
 COPY --from=builder /app/out/full/ .
+COPY --from=builder /app/tsconfig.json .
+COPY --from=builder /app/turbo.json .
 
 # Ensure Prisma successfully maps the engine mappings cleanly since we are actively mapping bounds
 RUN npx prisma generate --schema=packages/database/prisma/schema.prisma || true
