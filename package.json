@@ -12,7 +12,8 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "test": "turbo run test",
-    "test:cov": "turbo run test:cov"
+    "test:cov": "turbo run test:cov",
+    "postinstall": "npx prisma generate --schema=packages/database/prisma/schema.prisma || true"
   },
   "devDependencies": {
     "turbo": "latest"
