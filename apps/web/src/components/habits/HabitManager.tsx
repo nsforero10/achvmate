@@ -28,6 +28,7 @@ export function HabitManager({ dateString }: HabitManagerProps) {
   const isDark = theme.palette.mode === "dark";
 
   const { data: habits = [], isLoading } = useGetHabitsQuery();
+  
   const [createHabit] = useCreateHabitMutation();
   const [updateHabit] = useUpdateHabitMutation();
   const [deleteHabit] = useDeleteHabitMutation();
@@ -78,6 +79,46 @@ export function HabitManager({ dateString }: HabitManagerProps) {
       >
         <Box sx={{ display: "flex", gap: 3, flexWrap: "nowrap", flexGrow: 1 }}>
           {isLoading && <Typography sx={{ p: 2 }}>Loading habits...</Typography>}
+          
+          {!isLoading && habits.length === 0 && (
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                py: 12,
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 800, mb: 1, opacity: 0.8 }}>
+                You haven't added any habits yet
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 4, opacity: 0.5 }}>
+                Click here to add one!
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenNew}
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  fontSize: "2.5rem",
+                  minWidth: 0,
+                  p: 0,
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+                  transition: "transform 0.2s",
+                  "&:hover": { transform: "scale(1.05)" }
+                }}
+              >
+                +
+              </Button>
+            </Box>
+          )}
+
           {!isLoading && habits.map((h: any) => {
             const isCompletedOnSelected = h.entries?.some((e: any) => e.date.startsWith(selectedDate) && e.completed);
 
